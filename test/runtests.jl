@@ -1,4 +1,4 @@
-using Test
+using TidyTest
 
 macro m(expr)
     return Expr(:toplevel,

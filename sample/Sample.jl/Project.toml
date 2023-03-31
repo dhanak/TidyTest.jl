@@ -1,0 +1,4 @@
+name = "Sample"
+uuid = "fd99e09a-1e53-413a-8775-15e5d9575b13"
+authors = ["David Hanak <dhanak@gmail.com>"]
+version = "0.1.0"

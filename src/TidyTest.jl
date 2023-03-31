@@ -1,13 +1,13 @@
 module TidyTest
 
-export @run_tests, SpinnerTestSet
-
+using Reexport: @reexport
 using ProgressMeter: ProgressUnknown, finish!, next!
-
-using Test # needed for @testset
 using Test: AbstractTestSet, DefaultTestSet, Error, Fail, Result, get_testset
 
 import Test: record, finish
+
+@reexport using Test
+export @run_tests, SpinnerTestSet
 
 struct SpinnerTestProgress
     pad::Int
@@ -19,6 +19,25 @@ struct SpinnerTestProgress
     end
 end
 
+"""
+    SpinnerTestSet(desc::String; [width::Integer, verbose::Bool=false, rest...])
+
+An implementation of the `AbstractTestSet` abstract class, that reports testing
+progress using `ProgressMeter.ProgressUnknown`, continuously updating the status
+as tests are completed.
+
+Arguments:
+
+* `desc`: the name of the testset;
+
+* `width`: the display width of the progress line, defaults to the width of the
+  terminal;
+
+* `verbose=false`: whether to print a detailed summary even when none of the
+  tests fail or throw an error;
+
+* all other keyword arguments are passed directly to [`DefaultTestSet`](@ref).
+"""
 struct SpinnerTestSet <: AbstractTestSet
     parent::Union{SpinnerTestSet, SpinnerTestProgress}
     wrapped::DefaultTestSet
@@ -95,32 +114,77 @@ function pad_trunc(s::AbstractString, width::Int)::String
     return textwidth(s) > width ? "$(s[1:width - 1])…" : rpad(s, width)
 end
 
+"""
+    @run_tests [name] [dir="."] [filters=ARGS] [rest...]
+
+Discover and include (Julia) test files from the directory of the caller, and
+wrap them in a [`SpinnerTestSet`](@ref) for reporting. The name of the testset
+is automatically derived from the package name if the macro is called from the
+`runtests.jl` file.
+
+Optional arguments:
+
+* `name`: explicitly name the testset;
+
+* `dir=path`: discover tests in the provided directory (instead of the directory
+  of the source file containing the macro call);
+
+* `filters=[...]`: filter discovered source files - include only those which
+  contain any of the filter strings as a substring;
+
+* all other keyword arguments are passed directly to [`SpinnerTestSet`](@ref).
+
+Filtering uses smart case matching: if any of the patterns contains at least one
+capital letter, then matching is case-sensitive, otherwise its case-insensitive.
+
+# Example
+
+A minimalistic `runtests.jl` file:
+
+```julia
+using TidyTest
+
+@run_tests
+```
+"""
 macro run_tests(args...)
+    self = let f = __source__.file
+        f !== nothing && isfile(string(f)) ? string(f) : abspath("runtests.jl")
+    end
     kwargs = [Expr(:(=), arg.args[1], esc(arg.args[2]))
               for arg in args if Meta.isexpr(arg, :(=))]
     run_kwargs = filter(arg -> arg.args[1] ∈ [:filters, :dir], kwargs)
     ts_kwargs = setdiff(kwargs, run_kwargs)
     run_kwargs = map(arg -> Expr(:kw, arg.args...), run_kwargs)
     args = filter(arg -> !Meta.isexpr(arg, :(=)), [args...])
-    name = isempty(args) ? project_name(string(__source__)) : only(args)
+    name = isempty(args) ? project_name(self) : only(args)
     return quote
         @testset SpinnerTestSet $(string(name)) $(ts_kwargs...) begin
-            run_tests($__module__; $(run_kwargs...))
+            run_tests($__module__; self = $self, $(run_kwargs...))
         end
     end
 end
 
 function project_name(test_source::AbstractString)::String
-    return chopsuffix(splitpath(test_source)[end - 2], ".jl")
+    parts = splitpath(test_source)
+    return if length(parts) >= 3 && parts[end - 1] ∈ ["src", "test"]
+        chopsuffix(parts[end - 2], ".jl")
+    else
+        "Running tests"
+    end
 end
 
-function run_tests(mod::Module; filters = ARGS, dir = ".")::Nothing
+function run_tests(mod::Module;
+                   filters::AbstractVector{<: AbstractString} = ARGS,
+                   self::AbstractString = "runtests.jl",
+                   dir::AbstractString = dirname(self),
+                  )::Nothing
     smartcase = any(isuppercase, join(filters)) ? identity : lowercase
     filter(readdir(dir)) do file
         return isfile(file) &&
             endswith(file, ".jl") &&
             !startswith(file, ['.', '#']) &&
-            file != "runtests.jl" &&
+            file != basename(self) &&
             (isempty(filters) || any(occursin(smartcase(file)), filters))
     end .|> mod.include
     return nothing
