@@ -26,7 +26,7 @@ using TidyTest
 Add `TidyTest.jl` to the dependencies of your test:
 
 ```julia
-julia> using Pkg; pkg"activate test; TidyTest"
+julia> using Pkg; pkg"activate test; add TidyTest"
 ```
 
 And then execute your tests:

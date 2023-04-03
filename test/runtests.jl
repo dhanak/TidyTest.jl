@@ -4,7 +4,7 @@ macro m(expr)
     return Expr(:toplevel,
                 :(module $(esc(gensym()))
                       using Main: @test_stdout
-                      using Test, TidyTest
+                      using TidyTest
                       $(esc(expr))
                   end))
 end
@@ -17,6 +17,11 @@ macro test_stdout(msg, expr)
             @test contains(read(path, String), $(esc(msg)))
         end
     end
+end
+
+@testset SpinnerTestSet "aqua" begin
+    using Aqua
+    Aqua.test_all(TidyTest)
 end
 
 @m @run_tests "pass" filters = ["pass"]
