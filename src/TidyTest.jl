@@ -94,7 +94,7 @@ function update!(stp::SpinnerTestProgress, res, parts)::Nothing
         haskey(stp.results, :Fail) || haskey(stp.results, :Error) ? :red :
         haskey(stp.results, :Broken) ? :yellow : :green
     if res isa Fail || res isa Error
-        print(stderr, "\r\u1b[K") # clear progress line
+        print(stdout, "\r\u1b[K") # clear progress line
     else
         stats = join(["$k: $v" for (k, v) in result_sort(stp.results)], " | ")
         desc = pad_trunc(join(parts, " / "), stp.pad - textwidth(stats) - 3)
@@ -168,7 +168,7 @@ end
 function project_name(test_source::AbstractString)::String
     parts = splitpath(test_source)
     return if length(parts) >= 3 && parts[end - 1] ∈ ["src", "test"]
-        chopsuffix(parts[end - 2], ".jl")
+        replace(parts[end - 2], r"\.jl$" => "")
     else
         "Running tests"
     end

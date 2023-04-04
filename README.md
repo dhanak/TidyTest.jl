@@ -1,4 +1,5 @@
 [![CI](https://github.com/dhanak/TidyTest.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/dhanak/TidyTest.jl/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/dhanak/TidyTest.jl/branch/master/graph/badge.svg?token=CQYSC7NLOT)](https://codecov.io/gh/dhanak/TidyTest.jl)
 
 # TidyTest.jl
 

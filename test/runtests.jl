@@ -24,6 +24,11 @@ end
     Aqua.test_all(TidyTest)
 end
 
+@testset SpinnerTestSet "project name" begin
+    @test TidyTest.project_name(@__FILE__) == "TidyTest"
+    @test TidyTest.project_name("REPL[1]") == "Running tests"
+end
+
 @m @run_tests "pass" filters = ["pass"]
 @m @run_tests "broken" filters = ["broken"]
 @m @test_stdout "Failed" @test_throws TestSetException @run_tests "fail" filters = ["fail"]
