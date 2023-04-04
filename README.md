@@ -32,7 +32,7 @@ julia> using Pkg; pkg"activate test; add TidyTest"
 And then execute your tests:
 
 ```bash
-$ julia --project -e "use Pkg; Pkg.test()"
+$ julia --project -e "using Pkg; Pkg.test()"
 ```
 
 For example:
@@ -58,7 +58,7 @@ otherwise its case-insensitive. To pass command line arguments to `Pkg.test()`,
 the `test_args` keyword argument must be used:
 
 ```bash
-$ alias jlt='julia --project -e "use Pkg; Pkg.test(test_args=ARGS)"'
+$ alias jlt='julia --project -e "using Pkg; Pkg.test(test_args=ARGS)"'
 $ jlt some tests
 # ...runs test files which have "some" or "test" occurring in their names
 ```
@@ -81,7 +81,7 @@ summary is printed upon completion:
 
 ![](sample/vhs/full.gif)
 
-When there are only passing tests, no details are shown. The color of the
+When there are passing tests only, no details are shown. The color of the
 progress line stays green:
 
 ![](sample/vhs/oo.gif)
