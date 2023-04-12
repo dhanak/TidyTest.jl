@@ -20,23 +20,23 @@ struct SpinnerTestProgress
 end
 
 """
-    SpinnerTestSet(desc::String; [width::Integer, verbose::Bool=false, rest...])
+    SpinnerTestSet(desc::String; [width::Integer, verbose::Bool, rest...])
 
-An implementation of the `AbstractTestSet` abstract class, that reports testing
-progress using `ProgressMeter.ProgressUnknown`, continuously updating the status
-as tests are completed.
+An implementation of `Test.AbstractTestSet`, that reports testing progress using
+`ProgressMeter.ProgressUnknown`, continuously updating the status as tests are
+completed.
 
 Arguments:
 
 * `desc`: the name of the testset;
 
-* `width`: the display width of the progress line, defaults to the width of the
-  terminal;
+* `width`: the display width of the progress line (defaults to the width of the
+  terminal);
 
-* `verbose=false`: whether to print a detailed summary even when none of the
-  tests fail or throw an error;
+* `verbose`: whether to print a detailed summary even when none of the tests
+  fail or throw an error (defaults to `false`);
 
-* all other keyword arguments are passed directly to [`DefaultTestSet`](@ref).
+* all other keyword arguments are passed directly to `Test.DefaultTestSet`.
 """
 struct SpinnerTestSet <: AbstractTestSet
     parent::Union{SpinnerTestSet, SpinnerTestProgress}
@@ -126,16 +126,18 @@ Optional arguments:
 
 * `name`: explicitly name the testset;
 
-* `dir=path`: discover tests in the provided directory (instead of the directory
-  of the source file containing the macro call);
+* `dir=path`: discover tests in the provided directory (defaults to the
+  directory of the source file that contains the macro call);
 
-* `filters=[...]`: filter discovered source files - include only those which
-  contain any of the filter strings as a substring;
+* `filters=[...]`: filter discovered source files - include only files with a
+  name which contains any of the filter strings as a substring (defaults to the
+  command line arguments);
 
 * all other keyword arguments are passed directly to [`SpinnerTestSet`](@ref).
 
 Filtering uses smart case matching: if any of the patterns contains at least one
-capital letter, then matching is case-sensitive, otherwise its case-insensitive.
+capital letter, then matching is case-sensitive, otherwise it is
+case-insensitive.
 
 # Example
 

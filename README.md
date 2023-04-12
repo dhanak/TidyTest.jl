@@ -34,7 +34,7 @@ julia> using Pkg; pkg"activate test; add TidyTest"
 And then execute your tests:
 
 ```bash
-$ julia --project -e "using Pkg; Pkg.test()"
+julia --project -e "using Pkg; Pkg.test()"
 ```
 
 For example:
@@ -43,21 +43,22 @@ For example:
 
 The [`@run_tests`](#run_tests) macro automatically discovers all Julia source
 files in the directory of `runtests.jl`, and includes all of them. The entire
-block is wrapped in a single toplevel `@testset` using the custom test set type
-[`SpinnerTestSet`](#spinnertestset). Test progress is reported using
-[ProgressMeter.jl][], continuously updating the status as tests are completed.
-If some tests fail (or throw an error), the issues are reported as they happen,
-and a detailed test summary is printed upon completion, using the default test
-reporting.
+block of includes is wrapped in a single toplevel `@testset` using the custom
+test set type [`SpinnerTestSet`](#spinnertestset). Test progress is reported
+using [ProgressMeter.jl][], continuously updating the status as tests are
+completed. If some tests fail (or throw an error), the issues are reported as
+they happen, and a detailed test summary is printed upon completion, using the
+default test reporting.
 
 ### Test filtering
 
 The macro facilitates running tests selectively. Every command line argument is
-used as a pattern, and only those tests are run which contain any of the
-arguments as a substring. The search uses smart case matching: if any of the
-patterns contains at least one capital letter, then matching is case-sensitive,
-otherwise its case-insensitive. To pass command line arguments to `Pkg.test()`,
-the `test_args` keyword argument must be used:
+treated as a pattern that narrows the set of included test files. Specifically,
+only test files with a name containing any of the arguments as a substring are
+included. The search uses smart case matching: if any of the patterns contains
+at least one capital letter, then matching is case-sensitive, otherwise it is
+case-insensitive. To pass command line arguments to `Pkg.test()`, the
+`test_args` keyword argument must be used:
 
 ```bash
 $ alias jlt='julia --project -e "using Pkg; Pkg.test(test_args=ARGS)"'
@@ -74,7 +75,7 @@ the `@run_tests` macro, with a list of strings:
 
 ## Example sessions
 
-Here are some further examples, run in the [`sample`](sample) directory of this
+Here are some more examples, run in the [`sample`](sample) directory of this
 repository.
 
 When there are some tests that fail and/or throw an error, the issues are
@@ -116,11 +117,12 @@ Optional arguments:
 
 * `name`: explicitly name the testset;
 
-* `dir="."`: discover tests in the provided directory (instead of the directory
-  of the source file containing the macro call);
+* `dir="."`: discover tests in the provided directory (defaults to the directory
+  of the source file that contains the macro call);
 
 * `filters=[...]`: filter discovered source files - include only those which
-  contain any of the filter strings as a substring;
+  contain any of the filter strings as a substring (defaults to the command line
+  arguments);
 
 * all other keyword arguments are passed directly to
   [`SpinnerTestSet`](#spinnertestset).
@@ -128,26 +130,25 @@ Optional arguments:
 Filtering uses smart case matching: if any of the patterns contains at least one
 capital letter, then matching is case-sensitive, otherwise its case-insensitive.
 
-
 ### `SpinnerTestSet`
 
 ```julia
-SpinnerTestSet(desc::String; [width::Integer, verbose::Bool=false, rest...])
+SpinnerTestSet(desc::String; [width::Integer, verbose::Bool, rest...])
 ```
 
-An implementation of the `AbstractTestSet` abstract class, that reports testing
-progress using `ProgressMeter.ProgressUnknown`, continuously updating the status
-as tests are completed.
+An implementation of `Test.AbstractTestSet`, that reports testing progress using
+`ProgressMeter.ProgressUnknown`, continuously updating the status as tests are
+completed.
 
 Arguments:
 
 * `desc`: the name of the testset;
 
-* `width`: the display width of the progress line, defaults to the width of the
-  terminal;
+* `width`: the display width of the progress line (defaults to the width of the
+  terminal);
 
-* `verbose=false`: whether to print a detailed summary even when none of the
-  tests fail or throw an error;
+* `verbose`: whether to print a detailed summary even when none of the tests
+  fail or throw an error (defaults to `false`);
 
 * all other keyword arguments are passed directly to `Test.DefaultTestSet`.
 
