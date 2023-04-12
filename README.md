@@ -1,5 +1,6 @@
 [![CI](https://github.com/dhanak/TidyTest.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/dhanak/TidyTest.jl/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/dhanak/TidyTest.jl/branch/master/graph/badge.svg?token=CQYSC7NLOT)](https://codecov.io/gh/dhanak/TidyTest.jl)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 # TidyTest.jl
 
@@ -61,7 +62,7 @@ the `test_args` keyword argument must be used:
 ```bash
 $ alias jlt='julia --project -e "using Pkg; Pkg.test(test_args=ARGS)"'
 $ jlt some tests
-# ...runs test files which have "some" or "test" occurring in their names
+# ...runs test files which have "some" or "tests" occurring in their names
 ```
 
 Alternatively, one can filter tests by passing a `filters` keyword argument to
@@ -152,7 +153,7 @@ Arguments:
 
 ## Similar packages
 
-* [TestSetExcetions.jl][]
+* [TestSetExtensions.jl][]
 
 [ProgressMeter.jl]: https://github.com/timholy/ProgressMeter.jl
-[TestSetExcetions.jl]: https://github.com/ssfrr/TestSetExtensions.jl
+[TestSetExtensions.jl]: https://github.com/ssfrr/TestSetExtensions.jl
