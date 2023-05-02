@@ -73,6 +73,23 @@ the `@run_tests` macro, with a list of strings:
 @run_tests filters=["some", "tests"]
 ```
 
+### Migration guide
+
+To start using `TidyTest.jl` in an existing package, perform the following
+steps:
+
+1.  add `TidyTest.jl` to the dependencies of your test (as above);
+
+2.  rename your existing "runtests.jl" file (e.g., "MyModule.jl", but any name
+    other than "runtests.jl" works);
+
+3.  add a new "runtests.jl" file with "using TidyTest; @run_tests" as its
+    contents (as above).
+
+And you are all set. Optionally, if you want to use the test filtering
+functionality, break up your unit tests into multiple files, placing a single
+test set in every file.
+
 ## Example sessions
 
 Here are some more examples, run in the [`sample`](sample) directory of this
