@@ -1,7 +1,7 @@
 name = "TidyTest"
 uuid = "ef104744-fcb3-4e7e-8bb2-6e95860d81ed"
 authors = ["David Hanak <dhanak@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
