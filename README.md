@@ -80,15 +80,31 @@ steps:
 
 1.  add `TidyTest.jl` to the dependencies of your test (as above);
 
-2.  rename your existing "runtests.jl" file (e.g., "MyModule.jl", but any name
-    other than "runtests.jl" works);
+2.  rename your existing `runtests.jl` file (e.g., `MyModule.jl`, but any name
+    other than `runtests.jl` works);
 
-3.  add a new "runtests.jl" file with "using TidyTest; @run_tests" as its
-    contents (as above).
+3.  add a new `runtests.jl` file and write `using TidyTest; @run_tests` in it
+    (as above).
 
 And you are all set. Optionally, if you want to use the test filtering
 functionality, break up your unit tests into multiple files, placing a single
 test set in every file.
+
+### Running from the REPL
+
+In order to use the `@run_tests` macro directly from the REPL, you first need to
+change the working directory to `test`, otherwise the macro won't find your test
+source files. It's also recommended to add a semicolon (;) to the end of the
+command, to suppress printing the value of the
+[`SpinnerTestSet`](#spinnertestset) returned by the macro call.
+
+```julia
+julia> cd("test")
+
+julia> @run_tests verbose=true;
+Test Summary:   | Pass  Total  Time
+...
+```
 
 ## Example sessions
 
